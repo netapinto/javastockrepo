@@ -7,11 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class Exercise3 extends HttpServlet{
-	
-
+public class Exercise3 extends HttpServlet{	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		
 			resp.setContentType("text/html");
 			
 			double radius = 50;
@@ -30,13 +29,11 @@ public class Exercise3 extends HttpServlet{
 			double result = Math.pow(base, exp);
 			resp.getWriter().println("power of 20 with exp is "+result);	
 		
-			String line1 = new String ("calculation 1: Area of circle with radius " +radius+ "is"  +area+ "square-cm");
-		//	String line2 = new String ("calculation 2: Length of opposite where angle B is" +angleB+ " is " ​+opposite+ " cm");
-		//	String line3 = new String ("calculation 3: Power of "+base+ " with exp of "+exp+" is " +result);
+			String line1 = new String("calculation 1: Area of circle with radius " +radius+ "is"  +area+ "square-cm");
+			String line2 = new String("calculation 2: Length of opposite where angle B is" +angleB+ " is "+opposite+ " cm");
+			String line3 = new String("calculation 3: Power of "+base+ " with exp of "+exp+" is "+result);
 
-			//String ​resultStr​= ​line1 + "<br>" + line2 + "<br>" +line3;
-		//	resp.getWriter().println(​​);
-					
+			String ​resultStr​= ​line1 + "<br>" + line2 + "<br>" + line3;
+			resp.getWriter().println(​​​resultStr​);			
 	}
-
 }
