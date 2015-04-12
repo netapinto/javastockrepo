@@ -16,7 +16,6 @@ public class Exercise3 extends HttpServlet{
 			double radius = 50;
 			double area = Math.PI * Math.pow(radius, 2);
 			resp.getWriter().println("Area of circle with radius " +radius+ "is:" +area+ "square-cm");	
-	
 			
 			double angleB= 30;
 			double hypotenuseLengh=50;
@@ -33,7 +32,7 @@ public class Exercise3 extends HttpServlet{
 			String line2 = new String("calculation 2: Length of opposite where angle B is" +angleB+ " is "+opposite+ " cm");
 			String line3 = new String("calculation 3: Power of "+base+ " with exp of "+exp+" is "+result);
 
-			String ​resultStr​= ​line1 + "<br>" + line2 + "<br>" + line3;
-			resp.getWriter().println(​​​resultStr​);			
+			String printResult = line1 + "<br>" + line2 + "<br>" + line3;
+			resp.getWriter().println(printResult);			
 	}
 }
