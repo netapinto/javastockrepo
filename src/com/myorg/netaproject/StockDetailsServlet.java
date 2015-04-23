@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Calendar;
 
+@SuppressWarnings("serial")
 public class StockDetailsServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
