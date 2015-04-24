@@ -29,7 +29,7 @@ public class StockDetailsServlet extends HttpServlet{
 			Stock s2 = new Stock ("AAL", 5.78f, 5.5f, date2);
 			Stock s3 = new Stock ("CAAS", 32.2f, 31.5f, date3);
 			
-			String finalStr= s1.getSymbol()  +"<br>"+ s2.getHtmlDescription() +"<br>"+ s3.getHtmlDescription(); 
+			String finalStr= s1.getHtmlDescription()  +"<br>"+ s2.getHtmlDescription() +"<br>"+ s3.getHtmlDescription(); 
 			
 			resp.getWriter().println(finalStr);
 			
