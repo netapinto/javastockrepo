@@ -12,46 +12,49 @@ import com.myorg.netaproject.model.Stock;
 
 public class PortfolioManager {
 
-		Portfolio portfolio1;
-		
+		Portfolio myPortfolio;
+			
 		/**************getPortfolio*******************
-		 * @return portfolio number 2.*/
+		 * @return myPortfolio */
 		public Portfolio getPortfolio(String title){
-		Portfolio portfolio1 = new Portfolio (title);
-
+		Portfolio myPortfolio = new Portfolio (title);
+		myPortfolio.setTitle("Exercise 7 portfolio");
+		myPortfolio.updateBalance(10000);
+		
 		/**************setting the date**************/
 		Calendar cal = Calendar.getInstance();
-		cal.set(2014, 10, 15);
+		cal.set(2014, 12, 15);
 		java.util.Date date1 = cal.getTime();
 	
-		cal.set(2014, 10, 15);
+		cal.set(2014, 12, 15);
 		java.util.Date date2 = cal.getTime();
 		
-		cal.set(2014, 10, 15);
+		cal.set(2014, 12, 15);
 		java.util.Date date3 = cal.getTime();
 		
 		/**********insert the details to new stocks**********/
-		Stock s1 = new Stock ("PIH", 13.1f, 12.4f, date1);
-		Stock s2 = new Stock ("AAL", 5.78f, 5.5f, date2);
-		Stock s3 = new Stock ("CAAS", 32.2f, 31.5f, date3);
+		Stock s1 = new Stock ("PIH", 10f, 8.5f, date1, 20);
+		Stock s2 = new Stock ("AAL", 30.0f, 25.5f, date2, 30);
+		Stock s3 = new Stock ("CAAS", 20.0f, 15.5f, date3, 40);
 		
-		/*******adding the stocks to porfolio number 1*******/
-		portfolio1.addStock(s1);
-		portfolio1.addStock(s2);
-		portfolio1.addStock(s3);
+		/*******buy the stocks to myPorfolio*******/
+		myPortfolio.buyStock(s1, 20);
+		myPortfolio.buyStock(s2, 30);
+		myPortfolio.buyStock(s3, 40);
 		
-		/**@return portfolio number */
-		return portfolio1;
+		
+		/*******sell the stocks of myPorfolio*******/
+		myPortfolio.sellStock("AAL", (-1));
+		
+		/*******remove the stock from myPorfolio*******/
+		myPortfolio.removeStock("CAAS");
+		
+		/**@return myPortfolio */
+		return myPortfolio;
 			
 		}
 	
-		/**************getPortfolio*******************
-		 * @return portfolio number 2.*/
-		public Portfolio getPortfolio(Portfolio portfolio){
-			Portfolio portfolio2=new Portfolio(portfolio);
-			return portfolio2;
-		}
-	}
+}
 
 
 
