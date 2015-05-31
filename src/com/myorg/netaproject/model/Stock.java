@@ -4,32 +4,31 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.myorg.netaproject.model.Portfolio.ALGO_RECOMMENDATION;
+import org.algo.model.StockInterface;
+import org.algo.service.PortfolioManagerInterface.OPERATION;
 
 /** Stock class is a program that create the stocks.
  */
 
-public class Stock {
+public class Stock implements StockInterface{
 	
 		/*******constant******/	
 		/*private static final int BUY=0;
 		private static final int SELL=1;
 		private static final int REMOVE=0;
 		private static final int HOLD=0;
-		*/
-		
+		*/		
 	
 	/******private parameters******/
 		private String symbol;
 		private float ask;
 		private float bid;
 		private Date date;
-		private ALGO_RECOMMENDATION recommendation;
+		private OPERATION recommendation;
 		private int stockQuantity;
 		 
-
-
 		/**********c'tor*********/
+
 		/** Constructor for the Portfolio class
 		@param symbol
 		@param ask
@@ -84,6 +83,15 @@ public class Stock {
 		public void setStockQuantity(int stockQuantity) {
 			this.stockQuantity = stockQuantity;
 		}
+		
+		public OPERATION getRecommendation() {
+			return recommendation;
+		}
+
+		public void setRecommendation(OPERATION recommendation) {
+			this.recommendation = recommendation;
+		}
+
 
 		/**************getHtmlDescription*******************
 		 * @return a string that includes the details of the stock.*/
