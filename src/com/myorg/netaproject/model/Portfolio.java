@@ -4,18 +4,18 @@ import org.algo.model.PortfolioInterface;
 import org.algo.model.StockInterface;
 
 
+
 /** Portfolio class is a program that implements an application that 
  * Includes an array of stocks.
  */
 
 public class Portfolio implements PortfolioInterface {
  
-		/******enum OPERATION******/
-		public enum OPERATION {
-			BUY, SELL, REMOVE, HOLD
+		///******enum OPERATION******/
+		public enum ALGO_RECOMMENDATION {
+		BUY, SELL, REMOVE, HOLD
 		}
-		
-		
+
 		/******constant******/
 		private static int MAX_PORTFOLIO_SIZE=5;
 	
@@ -32,29 +32,46 @@ public class Portfolio implements PortfolioInterface {
 		@param stocks - an array of stocks.
 		@param title- the title of the potfolio.
 		*/
-		public Portfolio(String title){
-		this.stocks = new StockInterface[MAX_PORTFOLIO_SIZE];
+		public Portfolio(String Title){
+			title=Title;
+			this.stocks = new Stock[MAX_PORTFOLIO_SIZE];
+			this.portfolioSize=0;
 		}
 		
 		public Portfolio(Stock[] stockArray){
-		for (int i = 0; i<stockArray.length; i++){
-			this.addStock(stockArray[i]);
-			this.portfolioSize++;
+			this();
+			this.stocks = new Stock[MAX_PORTFOLIO_SIZE];
+			this.portfolioSize=0;
+			this.title=null;
+			this.balance=0;
+			for (int i = 0; i<stockArray.length; i++){
+				this.stocks[i]=stockArray[i];
+				//	this.addStock(stockArray[i]);
+				this.portfolioSize++;
+			}
 		}
+		
+		public Portfolio(){
+			this.stocks=new StockInterface [MAX_PORTFOLIO_SIZE];
+			this.title=null;
+			this.portfolioSize=0;
+			this.balance=0;
+			
 		}
 	
 	
-//		/******copy c'tor******/
-//	public Portfolio(Portfolio portfolio){
-//			this.stocks=new StockInterface [MAX_PORTFOLIO_SIZE];
-//			this.setTitle("Portfolio #2");
-//			this.portfolioSize=portfolio.portfolioSize;
-//			
-//			for(int i=0; i<portfolioSize ; i++){
-//				StockInterface coppied = new Stock(portfolio.stocks[i]);
-//				this.stocks[i]=coppied;
-//			}
-//		}
+		/******copy c'tor******/
+	public Portfolio(Portfolio portfolio){
+		System.out.println("copycons");
+			this.stocks=new StockInterface [MAX_PORTFOLIO_SIZE];
+			this.setTitle("Portfolio #2");
+			this.portfolioSize=portfolio.portfolioSize;
+			
+			for(int i=0; i<portfolioSize ; i++){
+				StockInterface coppied = new Stock(portfolio.stocks[i]);
+				this.stocks[i]=coppied;
+			}
+		}
 	
 		/******setters & getters methods******/
 		public String getTitle() {
@@ -107,9 +124,9 @@ public class Portfolio implements PortfolioInterface {
 			return null;
 		}
 
-		/***************addStock********************
+		/**************addStock********************
 		 * Gets an array stocks and adds a new stock.*/
-		public void addStock(StockInterface stock){
+			public void addStock(StockInterface stock){
 			boolean ifAlreadyExists=false;
 			((Stock) stock).setStockQuantity(0);
 			
@@ -125,6 +142,7 @@ public class Portfolio implements PortfolioInterface {
 			if(portfolioSize>=MAX_PORTFOLIO_SIZE)
 				System.out.println("Can’t add new stock, portfolio can have only "+MAX_PORTFOLIO_SIZE+" stocks");	
 		}
+	
 	
 		/**********UpdateBalance*********/
 		/**

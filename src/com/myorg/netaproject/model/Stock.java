@@ -6,26 +6,22 @@ import java.util.Date;
 
 import org.algo.model.StockInterface;
 import org.algo.service.PortfolioManagerInterface.OPERATION;
+import com.myorg.netaproject.model.Portfolio.ALGO_RECOMMENDATION;
 
 /** Stock class is a program that create the stocks.
  */
 
 public class Stock implements StockInterface{
-	
-		/*******constant******/	
-		/*private static final int BUY=0;
-		private static final int SELL=1;
-		private static final int REMOVE=0;
-		private static final int HOLD=0;
-		*/		
+
 	
 	/******private parameters******/
 		private String symbol;
 		private float ask;
 		private float bid;
 		private Date date;
-		private OPERATION recommendation;
+		private ALGO_RECOMMENDATION recommendation;
 		private int stockQuantity;
+		
 		 
 		/**********c'tor*********/
 
@@ -44,9 +40,14 @@ public class Stock implements StockInterface{
 		}
 
 		/******copy c'tor******/
-		public Stock(Stock s) {
-			this(new String(s.getSymbol()), s.getAsk(), s.getBid(), new Date(s.getDate().getTime()),s.getStockQuantity());
+		public Stock(StockInterface stocks) {
+			this(new String(stocks.getSymbol()), stocks.getAsk(), stocks.getBid(), new Date(stocks.getDate().getTime()),((Stock) stocks).getStockQuantity());
 		}
+		
+		
+		public Stock(){
+		
+		};
 
 		/******setters & getters methods******/
 		public String getSymbol() {
@@ -65,8 +66,15 @@ public class Stock implements StockInterface{
 		public Date getDate() {
 			return date;
 		}
-		public void setDate(Date date) {
+		/*public void setDate(Date date) {
 			this.date = date;
+		}
+		*/
+		
+		
+		public void setDate(long num) {
+			Date date = new Date(num * 1000);		
+			this.date =date;
 		}
 
 		public float getAsk() {
@@ -84,14 +92,13 @@ public class Stock implements StockInterface{
 			this.stockQuantity = stockQuantity;
 		}
 		
-		public OPERATION getRecommendation() {
+		public ALGO_RECOMMENDATION getRecommendation() {
 			return recommendation;
 		}
 
-		public void setRecommendation(OPERATION recommendation) {
+		public void setRecommendation(ALGO_RECOMMENDATION recommendation) {
 			this.recommendation = recommendation;
 		}
-
 
 		/**************getHtmlDescription*******************
 		 * @return a string that includes the details of the stock.*/
@@ -102,5 +109,6 @@ public class Stock implements StockInterface{
 			String ret =  "<b>symbol</b>:" + getSymbol()+ ", <b>ask</b>:"+getAsk()+ ", <b>bid</b>:"+getBid()+ ", <b>date</b>:"+dateStr+ ", <b>quantity</b>:"+getStockQuantity() ;
 			return ret;
 		}
+
 
 }

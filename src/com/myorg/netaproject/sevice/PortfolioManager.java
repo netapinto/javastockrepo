@@ -3,7 +3,6 @@ package com.myorg.netaproject.sevice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,12 +22,15 @@ import org.algo.service.ServiceManager;
 
 import com.myorg.netaproject.model.Portfolio;
 import com.myorg.netaproject.model.Stock;
+import com.myorg.netaproject.model.Portfolio.ALGO_RECOMMENDATION;
+
 
 /** PortfolioManager class is a program that manage the portfolio by
  * setting the date and the other details of the stock.
  */
 
 public class PortfolioManager implements PortfolioManagerInterface {
+		public enum OPERATION {BUY, SELL, REMOVE, HOLD }
 
 		private DatastoreService datastoreService = ServiceManager.datastoreService();
 		
@@ -77,6 +79,12 @@ public class PortfolioManager implements PortfolioManagerInterface {
 		}
 
 		*/
+		
+		
+		public PortfolioInterface getPortfolio() {
+			PortfolioDto portfolioDto = datastoreService.getPortfolilo();
+			return fromDto(portfolioDto);
+		}
 		
 		/**
 		 * Update portfolio with stocks
@@ -228,12 +236,23 @@ public class PortfolioManager implements PortfolioManagerInterface {
 		 * @return Stock
 		 */
 		private Stock fromDto(StockDto stockDto) {
-			Stock newStock = new Stock(stockDto.getSymbol(),stockDto.getAsk(),stockDto.getBid(),new Date(stockDto.getDate().getTime()),stockDto.getQuantity());
-			if(stockDto.getRecommendation() != null) 
-				((Stock) newStock).setRecommendation((OPERATION.valueOf(stockDto.getRecommendation())));
-				((Stock) newStock).setRecommendation(OPERATION.valueOf(stockDto.getRecommendation()));
+			Stock newStock = new Stock(null,0 ,0, null, 0);
+
+			newStock.setSymbol(stockDto.getSymbol());
+			newStock.setAsk(stockDto.getAsk());
+			newStock.setBid(stockDto.getBid());
+			newStock.setDate(stockDto.getDate().getTime());
+			newStock.setStockQuantity(stockDto.getQuantity());
+			if(stockDto.getRecommendation() != null) newStock.setRecommendation(ALGO_RECOMMENDATION.valueOf(stockDto.getRecommendation()));
+			else 
+				{
+				System.out.println("nn");
+				newStock.setRecommendation(ALGO_RECOMMENDATION.valueOf("HOLD"));
+				}
+				
 			return newStock;
 		}
+				
 
 		/**
 		 * toDto - covert Stock to Stock DTO
@@ -246,6 +265,7 @@ public class PortfolioManager implements PortfolioManagerInterface {
 			}
 			
 			Stock stock = (Stock) inStock;
+			
 			return new StockDto(stock.getSymbol(), stock.getAsk(), stock.getBid(), 
 					stock.getDate(), stock.getStockQuantity(), stock.getRecommendation().name());
 		}
@@ -276,7 +296,7 @@ public class PortfolioManager implements PortfolioManagerInterface {
 			StockDto[] stocks = dto.getStocks();
 			Portfolio ret;
 			if(stocks == null) {
-				ret = new Portfolio("newPort");			
+				ret = new Portfolio();			
 			}else {
 				List<Stock> stockList = new ArrayList<Stock>();
 				for (StockDto stockDto : stocks) {
@@ -314,12 +334,26 @@ public class PortfolioManager implements PortfolioManagerInterface {
 		}	
 	
 		/**
+		 * A method that returns a new instance of Portfolio copied from another instance.
+		 * @param portfolio		Portfolio to copy.
+		 * @return a new Portfolio object with the same values as the one given.
+		 */
+		public Portfolio duplicatePortfolio(Portfolio portfolio) {
+			Portfolio copyPortfolio = new Portfolio(portfolio);
+			return copyPortfolio;
+		}
+		
+		/**
 		 * Set portfolio title
 		 */
 		@Override
 		public void setTitle(String title) {
+			//System.out.println(title);
 			Portfolio portfolio = (Portfolio) getPortfolio();
+			
 			portfolio.setTitle(title);
+		//	System.out.println(portfolio.getTitle());
+
 			flush(portfolio);
 		}
 
@@ -352,14 +386,9 @@ public class PortfolioManager implements PortfolioManagerInterface {
 			portfolio.removeStock(symbol);
 			flush(portfolio);
 		}
-
-		@Override
-		public PortfolioInterface getPortfolio() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
 }
+
+
 
 
 

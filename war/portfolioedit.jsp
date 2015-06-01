@@ -11,7 +11,7 @@
 		var getStockDataAPI = "/portfolio/edit";
 		
 	  	$.getJSON( getStockDataAPI, function(jsonData) {
-			//console.log(jsonData); 
+			console.log(jsonData); 
 			
 			var errorMessageIn = '${param.error}';
 			if (errorMessageIn!='') {
