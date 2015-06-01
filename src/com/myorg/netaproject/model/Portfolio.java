@@ -209,6 +209,7 @@ public class Portfolio implements PortfolioInterface {
 							}			
 					}
 				}
+				System.out.println(sum);
 				updateBalance(sum);
 				System.out.println(quantity + " stocks of " +symbol+ " were sold!"+sum);
 				return Success;
@@ -236,13 +237,16 @@ public class Portfolio implements PortfolioInterface {
 						float quantityToBuy;
 						quantityToBuy = this.balance / stock.getAsk();
 						newQuantity = ((Stock) stocks[i]).getStockQuantity() + quantity;
+						System.out.println("q "+newQuantity);
 						((Stock) stocks[i]).setStockQuantity(newQuantity);
 						sum= quantityToBuy* stock.getAsk();
 						}
 							
 						else {
 						newQuantity = ((Stock) stocks[i]).getStockQuantity() + quantity;
+						System.out.println("q "+newQuantity);
 						((Stock) stocks[i]).setStockQuantity(newQuantity);
+						
 						sum = quantity* stock.getAsk();
 						}
 					}
@@ -254,7 +258,7 @@ public class Portfolio implements PortfolioInterface {
 					System.out.println(sum);
 					}
 				
-				System.out.println(sum);
+				System.out.println("sum "+sum);
 				sum *= (-1);
 				updateBalance(sum);
 				System.out.println(quantity + " stocks of " +stock.getSymbol() + " were bought!");

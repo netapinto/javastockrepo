@@ -243,6 +243,7 @@ public class PortfolioManager implements PortfolioManagerInterface {
 			newStock.setBid(stockDto.getBid());
 			newStock.setDate(stockDto.getDate().getTime());
 			newStock.setStockQuantity(stockDto.getQuantity());
+			System.out.println(stockDto.getQuantity());
 			if(stockDto.getRecommendation() != null) newStock.setRecommendation(ALGO_RECOMMENDATION.valueOf(stockDto.getRecommendation()));
 			else 
 				{
@@ -301,6 +302,7 @@ public class PortfolioManager implements PortfolioManagerInterface {
 				List<Stock> stockList = new ArrayList<Stock>();
 				for (StockDto stockDto : stocks) {
 					stockList.add(fromDto(stockDto));
+					//System.out.println("qqq" + stockDto.getQuantity());
 				}
 
 				Stock[] stockArray = stockList.toArray(new Stock[stockList.size()]);
