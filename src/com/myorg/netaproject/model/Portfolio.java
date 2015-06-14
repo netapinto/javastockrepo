@@ -3,6 +3,14 @@ package com.myorg.netaproject.model;
 import org.algo.model.PortfolioInterface;
 import org.algo.model.StockInterface;
 
+import com.myorg.excetion.BalanceException;
+import com.myorg.excetion.BalanceIsNotEnoughException;
+import com.myorg.excetion.PortfolioFullException;
+import com.myorg.excetion.StockAlreadyExistsException;
+import com.myorg.excetion.StockNotExistException;
+import com.myorg.excetion.StockQuantityException;
+import com.myorg.excetion.StockQuantityNotEnoughException;
+
 
 
 /** Portfolio class is a program that implements an application that 
@@ -126,21 +134,21 @@ public class Portfolio implements PortfolioInterface {
 
 		/**************addStock********************
 		 * Gets an array stocks and adds a new stock.*/
-			public void addStock(StockInterface stock){
-			boolean ifAlreadyExists=false;
-			((Stock) stock).setStockQuantity(0);
+			public void addStock(StockInterface stock) throws StockAlreadyExistsException, PortfolioFullException{
+	
+				((Stock) stock).setStockQuantity(0);
 			
 			for (int i=0 ; i< portfolioSize; i++){
 				if(this.stocks[i].getSymbol().equals(stock.getSymbol())){
-					ifAlreadyExists = true;
+					throw new StockAlreadyExistsException();
 				}
 			}
-			if (stock!=null && portfolioSize<MAX_PORTFOLIO_SIZE && ifAlreadyExists == false ){
+			if (stock!=null && portfolioSize<MAX_PORTFOLIO_SIZE ){
 				this.stocks[portfolioSize] = stock;
 				portfolioSize++;		
 			}
 			if(portfolioSize>=MAX_PORTFOLIO_SIZE)
-				System.out.println("Can’t add new stock, portfolio can have only "+MAX_PORTFOLIO_SIZE+" stocks");	
+				throw new PortfolioFullException();
 		}
 	
 	
@@ -148,38 +156,46 @@ public class Portfolio implements PortfolioInterface {
 		/**
 		@param amount- value to add to balance 
 		*/
-		public void updateBalance(float amount){
-				balance += amount;
+		public void updateBalance(float amount) throws BalanceException {
+				if (amount  >0) {
+					balance += amount;
+				}
+				if (amount + balance < 0){
+				throw new BalanceException(amount);
+
+				}
 		System.out.println("balance is :" +balance);
 
 		}
 		
 		/***************removeStock********************
 		 * Gets an array stocks &  index and remove the stock.
-		 * @param - array, index in the array.*/
-		public boolean removeStock (String symbol){
+		 * @param - array, index in the array.
+		 * @throws BalanceException 
+		 * @throws StockQuantityException 
+		 * @throws StockQuantityNotEnoughException */
+		public void removeStock (String symbol) throws StockNotExistException, StockQuantityNotEnoughException, StockQuantityException, BalanceException{
 			for (int i=0; i<portfolioSize; i++){ /**stock is exists*/
 				if (this.stocks[i].getSymbol().equals(symbol)){
 					sellStock(symbol, ((Stock) stocks[i]).getStockQuantity()); /**first, sell the stock*/
 					this.stocks[i]=null;
 					this.stocks[i]=this.stocks[portfolioSize-1];
-					portfolioSize--;	
-					return true;
+					portfolioSize--;
+					return;
 					}
-			}			
-					System.out.println("Stock is not exist in the Portfolio");
-					return false;
+			}
+		throw new StockNotExistException();
+			
 		}
 	
 
 		/***************sellStock********************
 			 * Gets symbol &  quantity and sell the stocks.
-			 * @param - symbol, quantity .*/
-			public boolean sellStock(String symbol,int quantity){
+			 * @param - symbol, quantity .
+		 * @throws BalanceException */
+			public void sellStock(String symbol,int quantity) throws StockQuantityNotEnoughException,StockQuantityException, BalanceException{	
 				float sum = 0;
-				boolean Success = true;
-				boolean Fail = false; 
-					
+				
 				for (int i=0; i<portfolioSize; i++){
 					
 					if (this.stocks[i].getSymbol().equals(symbol)){
@@ -194,12 +210,11 @@ public class Portfolio implements PortfolioInterface {
 							}
 						
 						else if (quantity> ((Stock) stocks[i]).getStockQuantity()){ /**can't sell - there is not enough stocks*/
-							System.out.println("Not enough stocks to sell");
-							return Fail;
+							throw new StockQuantityNotEnoughException();
 							}
 					
 						else if (quantity <= 0){ /**error - negative number*/
-							return Fail;
+							throw new StockQuantityException();
 							}
 						
 						else {			
@@ -212,25 +227,28 @@ public class Portfolio implements PortfolioInterface {
 				System.out.println(sum);
 				updateBalance(sum);
 				System.out.println(quantity + " stocks of " +symbol+ " were sold!"+sum);
-				return Success;
+				return;
 			}	
 			
 		/***************buyStock********************
 			 * Gets symbol &  quantity and sell the stocks.
-			 * @param - symbol, quantity .*/
-			public boolean buyStock (StockInterface stock,int quantity){
+			 * @param - symbol, quantity .
+		 * @throws PortfolioFullException 
+		 * @throws StockAlreadyExistsException 
+		 * @throws BalanceException */
+			public void buyStock (StockInterface stock,int quantity) throws BalanceIsNotEnoughException, StockAlreadyExistsException, PortfolioFullException, BalanceException{
 				float sum = 0;
 				int newQuantity;
-				boolean Success = true;
-				boolean Fail = false;
-				boolean ifAlreadyExists = false; 
+			//	boolean Success = true;
+			//	boolean Fail = false;
+			//	boolean ifAlreadyExists = false; 
 
-				if ((quantity* stock.getAsk())> balance) { /**can't buy- not enough money*/
-					System.out.println("Not enough balance to complete purchase.");
-					return Fail;
+				if ((quantity* stock.getAsk())> this.balance) { /**can't buy- not enough money*/
+				//	System.out.println("Not enough balance to complete purchase.");
+					throw new BalanceIsNotEnoughException();
 				}
 			
-				for (int i=0; i<portfolioSize; i++){
+				for (int i=0; i<this.portfolioSize; i++){
 					if (this.stocks[i].getSymbol().equals(stock.getSymbol())){
 						
 						if (quantity == -1){ /**buy stocks with all the money*/
@@ -249,22 +267,24 @@ public class Portfolio implements PortfolioInterface {
 						
 						sum = quantity* stock.getAsk();
 						}
+						i++;
 					}
-				}
-				if (ifAlreadyExists == false){ /**buy new stock that not exists*/
+					else{ /**buy new stock that not exists*/
 					addStock(stock);
 					sum = quantity* stock.getAsk();
 					((Stock) stock).setStockQuantity(quantity);
 					System.out.println(sum);
 					}
-				
+								
 				System.out.println("sum "+sum);
 				sum *= (-1);
 				updateBalance(sum);
 				System.out.println(quantity + " stocks of " +stock.getSymbol() + " were bought!");
-				return Success;
-				}		
+				return;
+				}
+			}
 			
+				
 		/***************changeStock**********************
 		 * Gets the value of bid & the index for change in the array of stocks.
 		 * @param - bid, index in the array.*/

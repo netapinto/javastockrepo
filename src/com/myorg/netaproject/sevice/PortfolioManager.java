@@ -20,6 +20,13 @@ import org.algo.service.MarketService;
 import org.algo.service.PortfolioManagerInterface;
 import org.algo.service.ServiceManager;
 
+import com.myorg.excetion.BalanceException;
+import com.myorg.excetion.BalanceIsNotEnoughException;
+import com.myorg.excetion.PortfolioFullException;
+import com.myorg.excetion.StockAlreadyExistsException;
+import com.myorg.excetion.StockNotExistException;
+import com.myorg.excetion.StockQuantityException;
+import com.myorg.excetion.StockQuantityNotEnoughException;
 import com.myorg.netaproject.model.Portfolio;
 import com.myorg.netaproject.model.Stock;
 import com.myorg.netaproject.model.Portfolio.ALGO_RECOMMENDATION;
@@ -177,50 +184,109 @@ public class PortfolioManager implements PortfolioManagerInterface {
 		
 		/**
 		 * Add stock to portfolio 
+		 * @throws PortfolioException 
 		 */
 		@Override
-		public void addStock(String symbol) {
+		public void addStock(String symbol) throws PortfolioException {
 			Portfolio portfolio = (Portfolio) getPortfolio();
 
-			try {
-				StockDto stockDto = ServiceManager.marketService().getStock(symbol);
-				
+				StockDto stockDto = null;
+			
+				try {
+					stockDto = ServiceManager.marketService().getStock(symbol);
+			
 				//get current symbol values from nasdaq.
 				Stock stock = fromDto(stockDto);
 				
 				//first thing, add it to portfolio.
-				portfolio.addStock(stock);   
+				
+				try {
+					portfolio.addStock(stock);
+				} 
+				catch (StockAlreadyExistsException e1) {
+					// TODO Auto-generated catch block
+					e1.getMessage();
+					e1.printStackTrace();
+					try {
+						throw e1;
+					} catch (StockAlreadyExistsException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} 
+				catch (PortfolioFullException e2) {		
+					e2.getMessage();
+					e2.printStackTrace();
+					try {
+						throw e2;
+					} catch (PortfolioFullException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
 				//or:
 				//portfolio.addStock(stock);   
 
-				//second thing, save the new stock to the database.
 				datastoreService.saveStock(toDto(portfolio.findStock(symbol)));
 				
 				flush(portfolio);
-			} catch (SymbolNotFoundInNasdaq e) {
-				System.out.println("Stock Not Exists: "+symbol);
+				}
+				catch (SymbolNotFoundInNasdaq e5) {
+					e5.getMessage();
+					e5.printStackTrace();
+					try {
+						throw e5;
+					} catch (SymbolNotFoundInNasdaq e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					}
 			}
-		}
 		
+			
 		/**
 		 * Buy stock
 		 */
 		@Override
 		public void buyStock(String symbol, int quantity) throws PortfolioException{
-			try {
+			
 				Portfolio portfolio = (Portfolio) getPortfolio();
 				
 				Stock stock = (Stock) portfolio.findStock(symbol);
 				if(stock == null) {
-					stock = fromDto(ServiceManager.marketService().getStock(symbol));				
+					try {
+						stock = fromDto(ServiceManager.marketService().getStock(symbol));
+					} catch (SymbolNotFoundInNasdaq e) {
+						// TODO Auto-generated catch block
+						e.getMessage();
+						e.printStackTrace();
+						//throw e;
+					}				
 				}
 				
-				portfolio.buyStock(stock, quantity);
+				try {
+					portfolio.buyStock(stock, quantity);
+				} catch (BalanceIsNotEnoughException e) {
+					
+					e.getMessage();
+					e.printStackTrace();
+					throw e;
+				} catch (StockAlreadyExistsException e) {
+					e.getMessage();
+					e.printStackTrace();
+					throw e;
+				} catch (PortfolioFullException e) {
+					e.getMessage();
+					e.printStackTrace();
+					throw e;
+				} catch (BalanceException e) {
+					e.getMessage();
+					e.printStackTrace();
+					throw e;
+				}
 				flush(portfolio);
-			}catch (Exception e) {
-				System.out.println("Exception: "+e);
 			}
-		}
 
 		/**
 		 * update database with new portfolio's data
@@ -362,9 +428,15 @@ public class PortfolioManager implements PortfolioManagerInterface {
 		/**
 		 * update portfolio balance
 		 */
-		public void updateBalance(float value) { 
+		public void updateBalance(float value) throws PortfolioException{ 
 			Portfolio portfolio = (Portfolio) getPortfolio();
-			portfolio.updateBalance(value);
+			try {
+				portfolio.updateBalance(value);
+			} catch (BalanceException e) {
+				e.getMessage();
+				e.printStackTrace();
+				throw e;
+			}
 			flush(portfolio);
 		}
 
@@ -375,7 +447,12 @@ public class PortfolioManager implements PortfolioManagerInterface {
 		@Override
 		public void sellStock(String symbol, int quantity) throws PortfolioException {
 			Portfolio portfolio = (Portfolio) getPortfolio();
-			portfolio.sellStock(symbol, quantity);
+			try {
+				portfolio.sellStock(symbol, quantity);
+			} catch (StockQuantityNotEnoughException | StockQuantityException| BalanceException e) {
+				// TODO Auto-generated catch block
+				
+			}
 			flush(portfolio);
 		}
 
@@ -385,7 +462,12 @@ public class PortfolioManager implements PortfolioManagerInterface {
 		@Override
 		public void removeStock(String symbol) { 
 			Portfolio portfolio = (Portfolio) getPortfolio();
-			portfolio.removeStock(symbol);
+			try {
+				portfolio.removeStock(symbol);
+			} catch (StockNotExistException | StockQuantityNotEnoughException| StockQuantityException | BalanceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			flush(portfolio);
 		}
 }
